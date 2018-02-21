@@ -34,6 +34,7 @@ data class People(val numFound: Int, val offset: Int, val items: ArrayList<Perso
     }
 }
 
+/* NOTE: the method has paging and will only show 1000 at a time */
 fun getListOfPeople(): People? {
     val path = "/widgets/search/modified.json?since=2018-02-20"
     val (request, response, result) = path.httpGet().responseObject(People.Deserializer())

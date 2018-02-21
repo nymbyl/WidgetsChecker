@@ -24,6 +24,13 @@ repositories {
     jcenter()
 }
 
+task widgetsCheck(type: JavaExec) {
+    systemProperty "configuration.directory", "conf"
+
+    main = "duke.WidgetsKt"
+    classpath = sourceSets.main.runtimeClasspath
+}
+
 configurations {
     ktlint
 }
