@@ -3,11 +3,20 @@ package duke
 import java.io.File
 
 import kotlin.system.measureTimeMillis
-import kotlinx.coroutines.experimental.*
-import kotlinx.coroutines.experimental.channels.*
-import kotlinx.coroutines.experimental.CommonPool
 
-import com.natpryce.konfig.*
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.runBlocking
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+
+import kotlinx.coroutines.experimental.channels.consumeEach
+import kotlinx.coroutines.experimental.channels.produce
+import kotlinx.coroutines.experimental.channels.ReceiveChannel
+
+import com.natpryce.konfig.stringType
+import com.natpryce.konfig.ConfigurationProperties
+import com.natpryce.konfig.getValue
+import com.natpryce.konfig.PropertyGroup
 
 import com.github.kittinunf.fuel.core.FuelManager
 import com.github.kittinunf.fuel.httpGet
@@ -129,7 +138,7 @@ object configuration : PropertyGroup() {
     val directory by stringType
 }
 
-object widgets: PropertyGroup() {
+object widgets : PropertyGroup() {
     val url by stringType
 }
 
