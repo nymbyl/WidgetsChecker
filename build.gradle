@@ -75,6 +75,19 @@ kotlin {
     }
 }
 
+// http://blog.getsandbox.com/2014/08/26/reduce-gradle-memory/
+// usage:
+// 
+// > gradle createdeps
+//
+// then run any class in project (see run.sh):
+// 
+// > ./run.sh duke.WidgetsKt
+
+task createdeps() {
+    def pathFile = new File(".classpath")
+    pathFile.write("export CLASSPATH=" + sourceSets.main.runtimeClasspath.asPath);
+}
 task ktlint(type: JavaExec, group: "verification") {
     description = "Check Kotlin code style."
     classpath = configurations.ktlint

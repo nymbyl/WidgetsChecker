@@ -173,9 +173,11 @@ fun main(args: Array<String>) = runBlocking<Unit> {
 
     val producer = producePeople(dateString)
 
+    val threads = args.getOrNull(1)?.toInt() ?: 10
+
     var processors = ArrayList<Deferred<Unit>>()
     val timeElapsed = measureTimeMillis {
-        repeat(10) {
+        repeat(threads) {
             processors.add(asyncProcessor(producer, results, it))
         }
 
