@@ -24,8 +24,17 @@ repositories {
     jcenter()
 }
 
+/* NOTE: to use gradle and send in argument have to do this:
+
+  $ ./gradlew widgetsCheck -Pdate=2018-02-15
+
+*/
 task widgetsCheck(type: JavaExec) {
     systemProperty "configuration.directory", "conf"
+
+    if(project.hasProperty('date')){
+        args(date)
+    }
 
     main = "duke.WidgetsKt"
     classpath = sourceSets.main.runtimeClasspath
