@@ -1,6 +1,8 @@
 package duke
 
 import java.io.File
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 import kotlin.system.measureTimeMillis
 
@@ -34,8 +36,9 @@ data class People(val numFound: Int, val offset: Int, val items: ArrayList<Perso
     }
 }
 
-fun getListOfPeople(): People? {
-    val path = "/widgets/search/modified.json?since=2018-02-20"
+/* NOTE: the method has paging and will only show 1000 at a time */
+fun getListOfPeople(since: String): People? {
+    val path = "/widgets/search/modified.json?since=$since"
     val (request, response, result) = path.httpGet().responseObject(People.Deserializer())
     val (people, error) = result
 
@@ -45,8 +48,8 @@ fun getListOfPeople(): People? {
     return people
 }
 
-fun producePeople() = produce<Person>(CommonPool) {
-    val people = getListOfPeople()
+fun producePeople(since: String) = produce<Person>(CommonPool) {
+    val people = getListOfPeople(since)
 
     if (people != null) {
         println("******** People Loaded ${people.numFound} *******")
@@ -142,6 +145,13 @@ object widgets : PropertyGroup() {
     val url by stringType
 }
 
+fun yesterday(): String {
+    val today = LocalDateTime.now().minusDays(1)
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+    val formatted = today.format(formatter)
+    return formatted
+}
+
 /**
  * one system property must be set 'configuration.directory'
  * e.g. -Dconfiguration.directory=conf
@@ -159,11 +169,15 @@ fun main(args: Array<String>) = runBlocking<Unit> {
     // place to store results - making map first
     val results = mutableMapOf<Person, ArrayList<String>>()
 
-    val producer = producePeople()
+    val dateString = args.getOrNull(0) ?: yesterday()
+
+    val producer = producePeople(dateString)
+
+    val threads = args.getOrNull(1)?.toInt() ?: 10
 
     var processors = ArrayList<Deferred<Unit>>()
     val timeElapsed = measureTimeMillis {
-        repeat(10) {
+        repeat(threads) {
             processors.add(asyncProcessor(producer, results, it))
         }
 
