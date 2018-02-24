@@ -14,7 +14,8 @@ import org.jdbi.v3.core.h2.H2DatabasePlugin
 import org.jdbi.v3.sqlobject.kotlin.onDemand
 import org.jdbi.v3.core.Handle
 
-
+// https://hackernoon.com/spring-5-jdbc-support-for-kotlin-7cc31f4db4a5
+// https://blog.philipphauer.de/do-it-yourself-orm-alternative-hibernate-drawbacks/
 data class IdAndName(val id: Int, val name: String)
 data class Thing(@Nested val idAndName: IdAndName,
                  val nullable: String?,
@@ -62,7 +63,4 @@ fun main(args: Array<String>) {
     for (r in rs) {
         println(r)
     }
-
 }
-// https://hackernoon.com/spring-5-jdbc-support-for-kotlin-7cc31f4db4a5
-//https://blog.philipphauer.de/do-it-yourself-orm-alternative-hibernate-drawbacks/
