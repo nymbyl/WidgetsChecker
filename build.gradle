@@ -23,6 +23,9 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
     jcenter()
+    maven { url  "https://dl.bintray.com/kotlin/exposed" }
+    maven { url "https://dl.bintray.com/kotlin/squash" }
+    maven { url "http://mvnrepository.com/artifact" }
 }
 
 /* NOTE: to use gradle and send in argument have to do this:
@@ -75,6 +78,27 @@ dependencies {
     compile 'org.jdbi:jdbi3-postgres:3.0.1'
 
     compile group: 'com.h2database', name: 'h2', version: '1.4.196'
+    compile 'org.jetbrains.exposed:exposed:0.9.1'
+
+    // squash
+    // https://mvnrepository.com/artifact/org.jetbrains.squash/squash-core
+    compile group: 'org.jetbrains.squash', name: 'squash-core', version: '0.2.4'
+    // https://mvnrepository.com/artifact/org.jetbrains.squash/squash
+    compile group: 'org.jetbrains.squash', name: 'squash', version: '0.2.4', ext: 'pom'
+    // https://mvnrepository.com/artifact/org.jetbrains.squash/squash-h2
+    compile group: 'org.jetbrains.squash', name: 'squash-h2', version: '0.2.4'
+
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
+    compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.10.0'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
+    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
+    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
     // https://mvnrepository.com/artifact/com.h2database/h2
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'

@@ -35,12 +35,17 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-h2:0.2.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-jdbc:0.2.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-graph:0.2.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-core:0.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.1" level="project" />
     <orderEntry type="library" name="Gradle: com.github.kittinunf.fuel:fuel:1.12.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.2" level="project" />
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-kotlin-sqlobject:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-kotlin:3.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.exposed:exposed:0.9.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.21" level="project" />
     <orderEntry type="library" name="Gradle: com.github.kittinunf.result:result:1.2.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-reflect:1.2.21" level="project" />
@@ -51,16 +56,23 @@
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-sqlobject:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-postgres:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: com.h2database:h2:1.4.196" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash:pom:0.2.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-slf4j-impl:2.10.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-core:2.10.0" level="project" />
+    <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-core:3.0.1" level="project" />
+    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.8.0-alpha2" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-tx:5.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-beans:5.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-core:5.0.4.RELEASE" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-runtime:1.2.21" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-core:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.postgresql:postgresql:9.4.1212" level="project" />
+    <orderEntry type="library" name="Gradle: joda-time:joda-time:2.9.9" level="project" />
+    <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-api:2.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-jcl:5.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.antlr:antlr-runtime:3.4" level="project" />
-    <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.7.25" level="project" />
     <orderEntry type="library" name="Gradle: net.jodah:expiringmap:0.5.6" level="project" />
+    <orderEntry type="library" name="Gradle: net.bytebuddy:byte-buddy:1.4.22" level="project" />
     <orderEntry type="library" name="Gradle: org.antlr:stringtemplate:3.2.1" level="project" />
     <orderEntry type="library" name="Gradle: antlr:antlr:2.7.7" level="project" />
   </component>
