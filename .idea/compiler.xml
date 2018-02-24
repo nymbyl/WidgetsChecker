@@ -4,7 +4,9 @@
     <bytecodeTargetLevel>
       <module name="Widgets_main" target="1.8" />
       <module name="Widgets_test" target="1.8" />
+      <module name="WidgetsChecker_dev" target="1.8" />
       <module name="WidgetsChecker_main" target="1.8" />
+      <module name="WidgetsChecker_pre" target="1.8" />
       <module name="WidgetsChecker_test" target="1.8" />
     </bytecodeTargetLevel>
   </component>

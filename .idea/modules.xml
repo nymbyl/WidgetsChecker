@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WidgetsChecker.iml" filepath="$PROJECT_DIR$/.idea/modules/WidgetsChecker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/WidgetsChecker_dev.iml" filepath="$PROJECT_DIR$/.idea/modules/WidgetsChecker_dev.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WidgetsChecker_main.iml" filepath="$PROJECT_DIR$/.idea/modules/WidgetsChecker_main.iml" group="WidgetsChecker" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/WidgetsChecker_test.iml" filepath="$PROJECT_DIR$/.idea/modules/WidgetsChecker_test.iml" group="WidgetsChecker" />
     </modules>
