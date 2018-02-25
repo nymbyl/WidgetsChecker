@@ -39,7 +39,11 @@ import org.jetbrains.squash.query.from
 import org.jetbrains.squash.query.where
 import org.jetbrains.squash.query.select
 
+//
+//import org.jetbrains.squash.graph.SourceHolder
+
 import org.jetbrains.squash.expressions.eq
+import org.jetbrains.squash.graph.bind
 import org.jetbrains.squash.results.get
 
 /*
@@ -159,7 +163,12 @@ data class City(
 // FIXME: would like to be able to do something
 // like this (like in SQLAlchemy)
 // mapper(City, Cities)
-
+// e.g.
+//mapper(User, user, properties={
+//    'addresses' : relationship(Address, backref='user', order_by=address.c.id)
+//})
+//
+//mapper(Address, address)
 /*
 maybe using something like this:
 
@@ -175,6 +184,8 @@ maybe using something like this:
 fun exposedExample() {
     Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
 
+    // NOTE: this is threadlocal static - might be an issue
+    // https://medium.com/@OhadShai/first-steps-with-kotlin-exposed-cb361a9bf5ac
     transaction {
         // print sql to std-out
         create (Cities)
@@ -191,7 +202,7 @@ fun exposedExample() {
     }
 }
 
-object CitiesMore : TableDefinition() {
+object Cities2 : TableDefinition() {
     val id = integer("id").autoIncrement()
     val name = varchar("name", 50)
 }
@@ -199,9 +210,16 @@ object CitiesMore : TableDefinition() {
 object Citizens : TableDefinition() {
     val id = varchar("id", 10).primaryKey()
     val name = varchar("name", length = 50)
-    val cityId = reference(CitiesMore.id, "city_id").nullable()
+    val cityId = reference(Cities2.id, "city_id").nullable()
 }
 
+//data class City(val id: Int, val name: String)
+data class Citizen(val id: String, val name: String, val city: City)
+
+interface Load {
+    val name: String
+    val value: Int
+}
 /*
 mysql connection might be something lke this:
   var transaction = MySqlConnection.create(url, user, password)
@@ -209,7 +227,6 @@ mysql connection might be something lke this:
 example queries:
 
 https://github.com/orangy/squash/blob/171055eed6a36f36c6237caf68446fdca9799167/squash-core/test/org/jetbrains/squash/tests/QueryTests.kt
-
  */
 fun squashExample() {
     // NOTE: not sure the best way to do this (typically)
@@ -220,11 +237,11 @@ fun squashExample() {
             println(it)
         }
         // takes a list - could be one though
-        databaseSchema().create(listOf(Citizens, CitiesMore))
+        databaseSchema().create(listOf(Citizens, Cities2))
 
-        val munichId = insertInto(CitiesMore).values {
+        val munichId = insertInto(Cities2).values {
             it[name] = "Munich"
-        }.fetch(CitiesMore.id).execute()
+        }.fetch(Cities2.id).execute()
 
         insertInto(Citizens).values {
             it[id] = "eugene"
@@ -232,9 +249,19 @@ fun squashExample() {
             it[cityId] = munichId
         }.execute()
 
+        val stmt = from(Citizens)
+        val qry = stmt.where(Citizens.id eq "eugene" )
+
+        // sourceholder object (can only 'bind' to interface)
+        val citizen = qry.bind<Load>(Citizens).execute().single()
+
+        println(citizen)
+        println(citizen.name)
+
         val row = from(Citizens)
                 .where { Citizens.id eq "eugene" }
                 .select(Citizens.name, Citizens.id, Citizens.cityId)
+                //.select("*") -note this does not work
                 .execute()
                 .single()
 
@@ -246,6 +273,7 @@ fun squashExample() {
 
 fun main(args: Array<String>) {
     //jdbiExample()
-    //exposedExample()
-    squashExample()
+    exposedExample()
+    // kind of like squash better, but exposed is better maintained, supported
+    //squashExample()
 }

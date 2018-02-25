@@ -88,17 +88,26 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jetbrains.squash/squash-h2
     compile group: 'org.jetbrains.squash', name: 'squash-h2', version: '0.2.4'
 
+    // 1.4.22 is used in squash
+    //compile group: 'net.bytebuddy:', name: 'byte-buddy', version: '1.7.9'
+    // https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy
+    //compile group: 'net.bytebuddy', name: 'byte-buddy', version: '1.7.10'
+
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
+
+    // NOTE: need these two to get rid of "SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"."
+    // message coming from jetbrains 'exposed' library
+
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
     compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.10.0'
-
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-simple
-    testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
+
+    //testCompile group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.25'
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-log4j12
-    testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
+    //testCompile group: 'org.slf4j', name: 'slf4j-log4j12', version: '1.7.25'
 
     // https://mvnrepository.com/artifact/com.h2database/h2
     testCompile group: 'com.h2database', name: 'h2', version: '1.4.196'
