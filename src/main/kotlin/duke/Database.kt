@@ -39,6 +39,8 @@ import org.jetbrains.squash.query.from
 import org.jetbrains.squash.query.where
 import org.jetbrains.squash.query.select
 
+import com.zaxxer.hikari.HikariDataSource
+import org.jetbrains.exposed.sql.StdOutSqlLogger
 //
 //import org.jetbrains.squash.graph.SourceHolder
 
@@ -170,6 +172,14 @@ data class City(
 //
 //mapper(Address, address)
 /*
+
+HikariDataSource ds = new HikariDataSource();
+ds.setJdbcUrl("jdbc:mysql://localhost:3306/simpsons");
+ds.setUsername("bart");
+ds.setPassword("51mp50n");
+
+ just call: Database.connect(dataSource) with it, instead of Database.connect(jdbcUrl,...)
+
 maybe using something like this:
 
     private fun mapToUser(rs: ResultSet, rowNum: Int) = User(
@@ -182,12 +192,19 @@ maybe using something like this:
     )
  */
 fun exposedExample() {
-    Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
+    var ds: HikariDataSource = HikariDataSource()
+    //ds.setDriverClassName("org.h2.Driver")
+    ds.setJdbcUrl("jdbc:h2:mem:test")
+
+    //Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
+    Database.connect(ds)
 
     // NOTE: this is threadlocal static - might be an issue
     // https://medium.com/@OhadShai/first-steps-with-kotlin-exposed-cb361a9bf5ac
     transaction {
+
         // print sql to std-out
+        logger.addLogger(StdOutSqlLogger)
         create (Cities)
 
         // insert new city. SQL: INSERT INTO Cities (name) VALUES ('St. Petersburg')

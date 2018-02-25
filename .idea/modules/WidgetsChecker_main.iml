@@ -59,6 +59,7 @@
     <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash:pom:0.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-slf4j-impl:2.10.0" level="project" />
     <orderEntry type="library" name="Gradle: org.apache.logging.log4j:log4j-core:2.10.0" level="project" />
+    <orderEntry type="library" name="Gradle: com.zaxxer:HikariCP:2.7.8" level="project" />
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-core:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.slf4j:slf4j-api:1.8.0-alpha2" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-tx:5.0.4.RELEASE" level="project" />

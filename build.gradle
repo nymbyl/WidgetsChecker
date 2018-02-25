@@ -96,6 +96,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-core
     compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.10.0'
 
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    compile group: 'com.zaxxer', name: 'HikariCP', version: '2.7.8'
+
     // NOTE: need these two to get rid of "SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder"."
     // message coming from jetbrains 'exposed' library
 
