@@ -78,7 +78,7 @@ dependencies {
     compile 'org.jdbi:jdbi3-postgres:3.0.1'
 
     compile group: 'com.h2database', name: 'h2', version: '1.4.196'
-    compile 'org.jetbrains.exposed:exposed:0.9.1'
+    compile 'org.jetbrains.exposed:exposed:0.10.1'
 
     // squash
     // https://mvnrepository.com/artifact/org.jetbrains.squash/squash-core

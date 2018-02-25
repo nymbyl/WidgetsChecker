@@ -23,7 +23,7 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.SchemaUtils.create
 
 import org.jetbrains.squash.definition.TableDefinition
-import org.jetbrains.squash.dialects.h2.H2Connection
+//import org.jetbrains.squash.dialects.h2.H2Connection
 import org.jetbrains.squash.statements.insertInto
 import org.jetbrains.squash.statements.values
 import org.jetbrains.squash.statements.fetch
@@ -40,7 +40,12 @@ import org.jetbrains.squash.query.where
 import org.jetbrains.squash.query.select
 
 import com.zaxxer.hikari.HikariDataSource
+//import org.h2.jdbcx.JdbcConnectionPool
 import org.jetbrains.exposed.sql.StdOutSqlLogger
+//import org.jetbrains.squash.connection.DatabaseConnection
+import org.jetbrains.squash.dialects.h2.H2DataConversion
+import org.jetbrains.squash.dialects.h2.H2Dialect
+import org.jetbrains.squash.drivers.JDBCConnection
 //
 //import org.jetbrains.squash.graph.SourceHolder
 
@@ -197,11 +202,11 @@ fun exposedExample() {
     ds.setJdbcUrl("jdbc:h2:mem:test")
 
     //Database.connect("jdbc:h2:mem:test", driver = "org.h2.Driver")
-    Database.connect(ds)
+    val db1 = Database.connect(ds)
 
     // NOTE: this is threadlocal static - might be an issue
     // https://medium.com/@OhadShai/first-steps-with-kotlin-exposed-cb361a9bf5ac
-    transaction {
+    transaction(db1) {
 
         // print sql to std-out
         logger.addLogger(StdOutSqlLogger)
@@ -245,9 +250,24 @@ example queries:
 
 https://github.com/orangy/squash/blob/171055eed6a36f36c6237caf68446fdca9799167/squash-core/test/org/jetbrains/squash/tests/QueryTests.kt
  */
+/*
+
+*/
 fun squashExample() {
+    // pooling might look like this:
+
+    //JdbcConnectionPool.create("jdbc:h2:mem:$catalogue", user, password)
+    var ds: HikariDataSource = HikariDataSource()
+    //ds.setDriverClassName("org.h2.Driver")
+    ds.setJdbcUrl("jdbc:h2:mem:test")
+
+    //return H2Connection { pool.connection }
+    var connection = JDBCConnection(H2Dialect, H2DataConversion(), ds)
+    //var transaction = H2Connection(ds.connection)
+    var transaction = connection.createTransaction()
+
     // NOTE: not sure the best way to do this (typically)
-    var transaction = H2Connection.createMemoryConnection().createTransaction()
+    //var transaction = H2Connection.createMemoryConnection().createTransaction()
 
     transaction.apply {
         connection.monitor.before {
