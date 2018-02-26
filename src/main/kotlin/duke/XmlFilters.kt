@@ -41,9 +41,14 @@ val xmlMultiple = """
 data class Item(var name: String? = null)
 data class Record(var number: String? = null, var item: Item? = null)
 
+interface Copyable {
+    fun copy()
+}
+
 open class SingleFilter<T>(t: T) : XMLFilterImpl() {
     var value = t
     fun item(): T { return value }
+    //fun reset(new: T) { value = new }
 }
 
 class CombinedAsSingleFilter<T>(t: T, val filters: List<SingleFilter<T>>) : SingleFilter<T>(t) {
@@ -69,40 +74,8 @@ class CombinedAsSingleFilter<T>(t: T, val filters: List<SingleFilter<T>>) : Sing
 
             if ("object" == qName) {
                 inObject = false
-                //callback(value)
             }
         }
-}
-//}
-
-// wow - this is kind of ugly - parses for multiple */
-class CombinedFilter<T>(t: T, val filters: List<SingleFilter<T>>, var callback: (T) -> Unit) : SingleFilter<T>(t) {
-    var inObject: Boolean = false
-
-    override fun startElement(uri: String, localName: String, qName: String,
-                              atts: Attributes) {
-
-        if ("object" == qName) {
-            inObject = true
-        }
-        filters.forEach {
-            it.startElement(uri, localName, qName, atts)
-        }
-    }
-
-    override fun endElement(uri: String, localName: String, qName: String) {
-        if (inObject) {
-
-            filters.forEach {
-                it.endElement(uri, localName, qName)
-            }
-        }
-
-        if ("object" == qName) {
-            inObject = false
-            callback(value)
-        }
-    }
 }
 
 /* just parses for a single repeating object */
@@ -158,11 +131,13 @@ class ObjectFilter() : XMLFilterImpl() {
 
 class RecordFilter(record: Record) : SingleFilter<Record>(record) {
 
+    var currentNumber: String? = null
+
     override fun startElement(uri: String, localName: String, qName: String,
                               atts: Attributes) {
         if ("record" == qName) {
-            value.number = atts.getValue("number")
-            println("RECORD ${atts.getValue("number")}")
+            currentNumber = atts.getValue("number")
+            value.number = currentNumber
         }
 
         // Pass the event to downstream filters.
@@ -170,21 +145,47 @@ class RecordFilter(record: Record) : SingleFilter<Record>(record) {
             contentHandler.startElement(uri, localName, qName, atts)
         }
     }
+
+    override fun endElement(uri: String, localName: String, qName: String) {
+        if ("record" == qName) {
+            value.number = currentNumber
+            // NOTE: if we don't null - it will retain value previously assigned
+            currentNumber = null
+        }
+
+        if (contentHandler != null) {
+            contentHandler.endElement(uri, localName, qName)
+        }
+    }
 }
 
 class ItemFilter(var record: Record) : SingleFilter<Record>(record) {
 
+    var currentName: String? = null
+
     override fun startElement(uri: String, localName: String, qName: String,
                               atts: Attributes) {
+
         if ("item" == qName) {
-            val item = Item(atts.getValue("name"))
-            value.item = item
-            println("ITEM ${atts.getValue("name")}")
+            currentName = atts.getValue("name")
         }
 
         // Pass the event to downstream filters.
         if (contentHandler != null) {
             contentHandler.startElement(uri, localName, qName, atts)
+        }
+    }
+
+    override fun endElement(uri: String, localName: String, qName: String) {
+        // in another words, one up - in case item happens to be null ??
+        if ("record" == qName) {
+            var item = Item(currentName)
+            value.item = item
+            currentName = null
+        }
+
+        if (contentHandler != null) {
+            contentHandler.endElement(uri, localName, qName)
         }
     }
 }
@@ -226,13 +227,14 @@ class Driver() {
         println(recordList)
     }
 
+    /*
     fun parseCombinedMultiple() {
         val parser = XMLReaderFactory.createXMLReader()
 
         val record = Record()
         val filterList = listOf(
-                RecordFilter(record),
-                ItemFilter(record)
+                RecordFilter(record.copy()),
+                ItemFilter(record.copy())
         )
 
         var recordList = mutableListOf<Record>()
@@ -248,6 +250,7 @@ class Driver() {
 
         println(recordList)
     }
+    */
 
     fun parseMultipleAsSingle() {
         val parser = XMLReaderFactory.createXMLReader()
@@ -256,6 +259,7 @@ class Driver() {
 
         var recordList = mutableListOf<Record>()
 
+        val record2 = Record()
         val filterList = listOf(
                 RecordFilter(record),
                 ItemFilter(record)
@@ -282,8 +286,8 @@ fun main(args: Array<String>) {
     println("***** parse 2:")
     driver.parseCombined()
 
-    println("****** parse 3:")
-    driver.parseCombinedMultiple()
+    //println("****** parse 3:")
+    //driver.parseCombinedMultiple()
 
     println("****** parse 4:")
     driver.parseMultipleAsSingle()
