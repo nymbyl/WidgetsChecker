@@ -42,7 +42,7 @@ val xmlMultiple = """
 data class Item(var name: String? = null)
 data class Record(var number: String? = null, var item: Item? = null)
 
-abstract class SingleFilterThing<T>() : DefaultHandler() {
+open class SingleFilterThing<T>() : DefaultHandler() {
     var value: T? = null
     open fun getThing(): T? { return value }
     open fun setThing(new: T) { value = new }
