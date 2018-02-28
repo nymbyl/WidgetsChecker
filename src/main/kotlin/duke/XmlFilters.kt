@@ -2,6 +2,7 @@ package duke
 
 import org.xml.sax.Attributes
 import org.xml.sax.InputSource
+import org.xml.sax.helpers.DefaultHandler
 import org.xml.sax.helpers.XMLFilterImpl
 
 import org.xml.sax.helpers.XMLReaderFactory
@@ -41,59 +42,89 @@ val xmlMultiple = """
 data class Item(var name: String? = null)
 data class Record(var number: String? = null, var item: Item? = null)
 
-interface Copyable {
-    fun copy()
+abstract class SingleFilterThing<T>() : DefaultHandler() {
+    var value: T? = null
+    open fun getThing(): T? { return value }
+    open fun setThing(new: T) { value = new }
 }
 
-open class SingleFilter<T>(t: T) : XMLFilterImpl() {
-    var value = t
-    fun item(): T { return value }
-    //fun reset(new: T) { value = new }
-}
+class RecordFilterThing() : SingleFilterThing<Record>() {
+    var currentNumber: String? = null
 
-class CombinedAsSingleFilter<T>(t: T, val filters: List<SingleFilter<T>>) : SingleFilter<T>(t) {
-    var inObject: Boolean = false
-
-    override fun startElement(uri: String, localName: String, qName: String,
-                              atts: Attributes) {
-        if ("object" == qName) {
-            inObject = true
+    override fun startElement(uri: String, localName: String, qName: String, atts: Attributes) {
+        if ("record" == qName) {
+            currentNumber = atts.getValue("number")
+            value?.let { it.number = currentNumber }
         }
+    }
+
+    override fun endElement(uri: String, localName: String, qName: String) {
+        if ("record" == qName) {
+            value?.let { it.number = currentNumber }
+            // NOTE: if we don't null - it will retain value previously assigned
+            currentNumber = null
+        }
+    }
+}
+
+class ItemFilterThing() : SingleFilterThing<Record>() {
+    var currentName: String? = null
+
+    override fun startElement(uri: String, localName: String, qName: String, atts: Attributes) {
+
+        if ("item" == qName) {
+            currentName = atts.getValue("name")
+        }
+    }
+
+    override fun endElement(uri: String, localName: String, qName: String) {
+        if ("record" == qName) {
+            var item = Item(currentName)
+            value?.let { it.item = item }
+            currentName = null
+        }
+    }
+}
+
+class CombinedFilterThing<T>(val filters: List<SingleFilterThing<T>>) : SingleFilterThing<T>() {
+
+    override fun setThing(new: T) {
+        filters.forEach {
+            it.setThing(new)
+        }
+        value = new
+    }
+    override fun startElement(uri: String, localName: String, qName: String, atts: Attributes) {
         filters.forEach {
             it.startElement(uri, localName, qName, atts)
         }
     }
 
     override fun endElement(uri: String, localName: String, qName: String) {
-            if (inObject) {
-
-                filters.forEach {
-                    it.endElement(uri, localName, qName)
-                }
-            }
-
-            if ("object" == qName) {
-                inObject = false
-            }
+        filters.forEach {
+            it.endElement(uri, localName, qName)
         }
+    }
 }
 
-/* just parses for a single repeating object */
-class RepeaterFilter<T>(var filter: SingleFilter<T>, var callback: (T) -> Unit) : XMLFilterImpl() {
+class RepeaterFilterThing<T>(val filter: SingleFilterThing<T>,
+    var start: (SingleFilterThing<T>) -> Unit,
+    var end: (SingleFilterThing<T>) -> Unit) : XMLFilterImpl() {
+
     var inObject = false
 
-    override fun startElement(uri: String, localName: String, qName: String,
-                              atts: Attributes) {
+    override fun characters(ch: CharArray?, start: Int, length: Int) {
+        filter.characters(ch, start, length)
+    }
+    override fun startElement(uri: String, localName: String, qName: String, atts: Attributes) {
+
         if ("object" == qName) {
             inObject = true
+            start(filter)
         }
 
         if (inObject) {
             filter.startElement(uri, localName, qName, atts)
-        }
-        // Pass the event to downstream filters.
-        if (contentHandler != null) {
-            contentHandler.startElement(uri, localName, qName, atts)
         }
     }
 
@@ -105,87 +136,7 @@ class RepeaterFilter<T>(var filter: SingleFilter<T>, var callback: (T) -> Unit) 
 
         if ("object" == qName) {
             inObject = false
-            callback(filter.item())
-        }
-
-        if (contentHandler != null) {
-            contentHandler.endElement(uri, localName, qName)
-        }
-    }
-}
-
-class ObjectFilter() : XMLFilterImpl() {
-
-    override fun startElement(uri: String, localName: String, qName: String,
-                              atts: Attributes) {
-        if ("object" == qName) {
-            println("OBJECT")
-        }
-
-        // Pass the event to downstream filters.
-        if (contentHandler != null) {
-            contentHandler.startElement(uri, localName, qName, atts)
-        }
-    }
-}
-
-class RecordFilter(record: Record) : SingleFilter<Record>(record) {
-
-    var currentNumber: String? = null
-
-    override fun startElement(uri: String, localName: String, qName: String,
-                              atts: Attributes) {
-        if ("record" == qName) {
-            currentNumber = atts.getValue("number")
-            value.number = currentNumber
-        }
-
-        // Pass the event to downstream filters.
-        if (contentHandler != null) {
-            contentHandler.startElement(uri, localName, qName, atts)
-        }
-    }
-
-    override fun endElement(uri: String, localName: String, qName: String) {
-        if ("record" == qName) {
-            value.number = currentNumber
-            // NOTE: if we don't null - it will retain value previously assigned
-            currentNumber = null
-        }
-
-        if (contentHandler != null) {
-            contentHandler.endElement(uri, localName, qName)
-        }
-    }
-}
-
-class ItemFilter(var record: Record) : SingleFilter<Record>(record) {
-
-    var currentName: String? = null
-
-    override fun startElement(uri: String, localName: String, qName: String,
-                              atts: Attributes) {
-
-        if ("item" == qName) {
-            currentName = atts.getValue("name")
-        }
-
-        // Pass the event to downstream filters.
-        if (contentHandler != null) {
-            contentHandler.startElement(uri, localName, qName, atts)
-        }
-    }
-
-    override fun endElement(uri: String, localName: String, qName: String) {
-        // in another words, one up - in case item happens to be null ??
-        if ("record" == qName) {
-            var item = Item(currentName)
-            value.item = item
-            currentName = null
-        }
-
-        if (contentHandler != null) {
-            contentHandler.endElement(uri, localName, qName)
+            end(filter)
         }
     }
 }
@@ -193,102 +144,67 @@ class ItemFilter(var record: Record) : SingleFilter<Record>(record) {
 class Driver() {
 
     fun parseSingle() {
+        //val parserFactory:SAXParserFactory = SAXParserFactory.newInstance()
+        //val parser: SAXParser = parserFactory.newSAXParser()
         val parser = XMLReaderFactory.createXMLReader()
 
-        val objectFilter = ObjectFilter()
-        objectFilter.parent = parser
-
         var record = Record()
-        val recordFilter = RecordFilter(record)
-        recordFilter.setParent(objectFilter)
+        val recordFilter = RecordFilterThing()
+        recordFilter.setThing(record)
+        parser.contentHandler = recordFilter
 
-        val itemFilter = ItemFilter(record)
-        itemFilter.setParent(recordFilter)
-
-        itemFilter.parse(InputSource(StringReader(xmlObject)))
+        parser.parse(InputSource(StringReader(xmlObject)))
+        //parser.parse(InputSource(StringReader(xmlObject)), recordFilter)
+        //itemFilter.parse(InputSource(StringReader(xmlObject)))
         println(record)
     }
 
-    fun parseCombined() {
+    fun parseSingleCombined() {
         val parser = XMLReaderFactory.createXMLReader()
 
-        val record = Record()
+        var record = Record()
 
-        var recordList = mutableListOf<Record>()
+        val recordFilter = RecordFilterThing()
+        recordFilter.setThing(record)
 
-        val combinedFilter = RepeaterFilter(RecordFilter(record), {
-            // NOTE: have to copy cause it TypedFilter continually
-            // populates object
-            recordList.add(it.copy())
-        })
-        combinedFilter.parent = parser
-        combinedFilter.parse(InputSource(StringReader(xmlMultiple)))
+        val itemFilter = ItemFilterThing()
+        itemFilter.setThing(record)
 
-        println(recordList)
+        val combined = CombinedFilterThing(listOf(recordFilter, itemFilter))
+        parser.contentHandler = combined
+
+        parser.parse(InputSource(StringReader(xmlObject)))
+        println(record)
     }
 
-    /*
-    fun parseCombinedMultiple() {
+    fun parseMultipleThings() {
         val parser = XMLReaderFactory.createXMLReader()
 
-        val record = Record()
-        val filterList = listOf(
-                RecordFilter(record.copy()),
-                ItemFilter(record.copy())
+        val combined = CombinedFilterThing(listOf(RecordFilterThing(), ItemFilterThing()))
+
+        val records = mutableSetOf<Record>()
+        val repeaterFilter = RepeaterFilterThing(combined,
+                start = { it.setThing(Record()) /*; println("start") */ },
+                end = { it.getThing()?.let { records.add(it.copy()) } /*; println("end")*/ }
         )
 
-        var recordList = mutableListOf<Record>()
+        repeaterFilter.parent = parser
+        repeaterFilter.parse(InputSource(StringReader(xmlMultiple)))
 
-        val multipleFilter = CombinedFilter(record, filterList, {
-            // NOTE: have to copy cause it TypedFilter continually
-            // populates object
-            recordList.add(it.copy())
-        })
-
-        multipleFilter.parent = parser
-        multipleFilter.parse(InputSource(StringReader(xmlMultiple)))
-
-        println(recordList)
-    }
-    */
-
-    fun parseMultipleAsSingle() {
-        val parser = XMLReaderFactory.createXMLReader()
-
-        val record = Record()
-
-        var recordList = mutableListOf<Record>()
-
-        val record2 = Record()
-        val filterList = listOf(
-                RecordFilter(record),
-                ItemFilter(record)
-        )
-        val filter = CombinedAsSingleFilter(record, filterList)
-        val combinedFilter = RepeaterFilter(filter, {
-            // NOTE: have to copy cause it TypedFilter continually
-            // populates object
-            recordList.add(it.copy())
-        })
-        combinedFilter.parent = parser
-        combinedFilter.parse(InputSource(StringReader(xmlMultiple)))
-
-        println(recordList)
+        for (record in records) {
+            println(record)
+        }
     }
 }
 
 fun main(args: Array<String>) {
-
     val driver = Driver()
     println("**** parse 1:")
     driver.parseSingle()
 
-    println("***** parse 2:")
-    driver.parseCombined()
+    println("**** parse 2:")
+    driver.parseSingleCombined()
 
-    //println("****** parse 3:")
-    //driver.parseCombinedMultiple()
-
-    println("****** parse 4:")
-    driver.parseMultipleAsSingle()
+    println("***** parse 3:")
+    driver.parseMultipleThings()
 }
