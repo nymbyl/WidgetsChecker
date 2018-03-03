@@ -39,17 +39,17 @@
     <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-jdbc:0.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-graph:0.2.4" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.squash:squash-core:0.2.4" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.21" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.30" level="project" />
     <orderEntry type="library" name="Gradle: com.google.code.gson:gson:2.8.1" level="project" />
     <orderEntry type="library" name="Gradle: com.github.kittinunf.fuel:fuel:1.12.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlinx:kotlinx-coroutines-core:0.22.2" level="project" />
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-kotlin-sqlobject:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jdbi:jdbi3-kotlin:3.0.1" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.exposed:exposed:0.10.1" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.21" level="project" />
     <orderEntry type="library" name="Gradle: com.github.kittinunf.result:result:1.2.0" level="project" />
     <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-reflect:1.2.21" level="project" />
-    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.21" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.2.30" level="project" />
+    <orderEntry type="library" name="Gradle: org.jetbrains.kotlin:kotlin-stdlib:1.2.30" level="project" />
     <orderEntry type="library" name="Gradle: com.natpryce:konfig:1.6.1.0" level="project" />
     <orderEntry type="library" name="Gradle: org.springframework:spring-jdbc:5.0.4.RELEASE" level="project" />
     <orderEntry type="library" name="Gradle: org.xerial:sqlite-jdbc:3.21.0.1" level="project" />
